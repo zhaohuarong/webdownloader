@@ -12,11 +12,13 @@ INCLUDEPATH += $$PWD/core
 SOURCES += \
         main.cpp \
         mainwindow.cpp \
-    core/downloader.cpp
+    core/downloader.cpp \
+    core/accessmanager.cpp
 
 HEADERS += \
         mainwindow.h \
-    core/downloader.h
+    core/downloader.h \
+    core/accessmanager.h
 
 FORMS += \
         mainwindow.ui

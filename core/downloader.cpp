@@ -47,6 +47,7 @@ void Downloader::replyFinished(QNetworkReply *reply)
         QByteArray bytes = reply->readAll();
         if(file != NULL)
         {
+            //qDebug() << QFileInfo(*file).absoluteFilePath();
             file->close();
             emit sigDownloadFinished(QFileInfo(*file).absoluteFilePath());
         }

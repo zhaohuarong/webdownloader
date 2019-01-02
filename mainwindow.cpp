@@ -1,5 +1,7 @@
+#include <QDebug>
 #include <QUrl>
 
+#include "accessmanager.h"
 #include "downloader.h"
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -20,6 +22,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::onOpen()
 {
-    Downloader *loader = new Downloader(this);
-    loader->httpDownload(QUrl("http://e.hiphotos.baidu.com/image/pic/item/a8773912b31bb05114a597be3b7adab44bede0a7.jpg"), "D:/");
+//    Downloader *loader = new Downloader(this);
+//    loader->httpDownload(QUrl("http://e.hiphotos.baidu.com/image/pic/item/a8773912b31bb05114a597be3b7adab44bede0a7.jpg"), "D:/");
+    g_pAccessManager->getHTML("http://www.baidu.com");
+    close();
 }
