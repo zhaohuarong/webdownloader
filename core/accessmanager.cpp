@@ -8,7 +8,9 @@
 AccessManager *AccessManager::m_pAccessManager = NULL;
 
 AccessManager::AccessManager(QObject *parent) :
-    QObject(parent)
+    QObject(parent),
+    m_accessManager(NULL),
+    m_eCurrentType(TYPE_DEFAULT)
 {
     m_accessManager = new QNetworkAccessManager(this);
     connect(m_accessManager, SIGNAL(finished(QNetworkReply *)), this, SLOT(finishedSlot(QNetworkReply *)));
@@ -33,6 +35,23 @@ AccessManager *AccessManager::instance()
     return m_pAccessManager;
 }
 
+void AccessManager::getTitleAndAllPictureUrl(const QString &url, QString &strTitle, QStringList &lstUrl)
+{
+    m_eCurrentType = TYPE_ALL_PIC_URL;
+    m_strTitle.clear();
+    m_lstPictureUrl.clear();
+
+    QNetworkRequest request;
+    request.setUrl(url);
+	m_accessManager->get(request);
+
+    sync();
+
+    strTitle = m_strTitle;
+    lstUrl = m_lstPictureUrl;
+    m_eCurrentType = TYPE_DEFAULT;
+}
+
 void AccessManager::getHTML(const QString &url)
 {
     QNetworkRequest request;
@@ -46,12 +65,47 @@ void AccessManager::finishedSlot(QNetworkReply *reply)
 {
     if(reply->error() == QNetworkReply::NoError)
     {
-        while(1)
+        if(m_eCurrentType == TYPE_DEFAULT)
         {
-            QByteArray bytes = reply->readLine();
-            qDebug() << QString::fromUtf8(bytes);
-            if(bytes.count() <= 0)
-                break;
+            //do nothing
+/*			QByteArray allBytes;
+			while(1)
+			{
+				QByteArray bytes = reply->readAll();
+				qDebug() << QString::fromUtf8(bytes);
+				if (bytes.count() <= 0)
+					break;
+				allBytes.append(bytes);
+			}
+			QString str = QString::fromUtf8(allBytes).replace("\r", "").replace("\n", "").replace("\t", "");;
+			qDebug() << str;*/
+        }
+        else if(m_eCurrentType == TYPE_ALL_PIC_URL)
+        {
+			QByteArray bytes = reply->readAll();
+			QString str = QString::fromUtf8(bytes);
+			str = str.replace("\r", "").replace("\n", "").replace("\t", "");
+			qDebug() << str;
+
+			QString tag1 = "<title>", tag2 = "</title>";
+			if (str.contains(tag1) && str.contains(tag2))
+			{
+				int nBegin = str.indexOf(tag1);
+				int nEnd = str.indexOf(tag2);
+				m_strTitle = str.mid(nBegin + tag1.count(), nEnd - (nBegin + tag1.count())).trimmed();
+			}
+
+			while(1)
+			{
+				int i = str.indexOf("<img src=");
+				if (i < 0)
+					break;
+				str = str.mid(i);
+				int j = str.indexOf(">");
+				QString url = str.left(j);
+				m_lstPictureUrl << url;
+				str = str.mid(j);
+			}
         }
     }
     else
