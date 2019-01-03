@@ -35,7 +35,11 @@ void MainWindow::onOpen()
 	QString strTitle;
     QStringList lstUrl;
     g_pAccessManager->getTitleAndAllPictureUrl("http://www.sanygroup.com", strTitle, lstUrl);
-    qDebug() << strTitle;
+    qDebug() << strTitle.replace("\\", "");
     qDebug() << lstUrl;
-    close();
+
+	// mkdir
+
+	//download
+
 }

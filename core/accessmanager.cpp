@@ -97,13 +97,15 @@ void AccessManager::finishedSlot(QNetworkReply *reply)
 
 			while(1)
 			{
-				int i = str.indexOf("<img src=");
+				QString flag = "<img src=";
+				int i = str.indexOf(flag);
 				if (i < 0)
 					break;
-				str = str.mid(i);
-				int j = str.indexOf(">");
+				str = str.mid(i + flag.count() + 1);
+				int j = str.indexOf("\"");
 				QString url = str.left(j);
-				m_lstPictureUrl << url;
+				if(url.endsWith(".jpg"))
+					m_lstPictureUrl << url;
 				str = str.mid(j);
 			}
         }
