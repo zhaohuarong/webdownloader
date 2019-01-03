@@ -1,3 +1,4 @@
+#include <QDir>
 #include <QDebug>
 #include <QUrl>
 
@@ -39,6 +40,11 @@ void MainWindow::onOpen()
     qDebug() << lstUrl;
 
 	// mkdir
+	if(!QDir(strTitle).exists())
+	{
+		bool s = QDir().mkdir(strTitle);
+		qDebug() << s;
+	}
 
 	//download
 
